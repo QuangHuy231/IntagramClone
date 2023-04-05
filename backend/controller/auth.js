@@ -1,8 +1,9 @@
 import db from "../connectDB.js";
 import bcrypt from "bcrypt";
 import { generateToken } from "../config/token.js";
+import asyncHandler from "express-async-handler";
 
-export const register = (req, res) => {
+export const register = asyncHandler((req, res) => {
   const q = "SELECT * FROM `user` WHERE `email` = ? OR `username` = ?";
   db.query(q, [req.body.email, req.body.username], (err, data) => {
     if (err) return res.json(err);
@@ -22,9 +23,9 @@ export const register = (req, res) => {
       return res.status(200).json("User has been created");
     });
   });
-};
+});
 
-export const login = (req, res) => {
+export const login = asyncHandler((req, res) => {
   // CHECK USERNAME
 
   const q = "SELECT * FROM user WHERE email = ?";
@@ -42,18 +43,31 @@ export const login = (req, res) => {
 
     if (!isPasswordCorrect)
       return res.status(400).json("Wrong email or password");
+    let user_id = data[0].user_id;
+    const q = "UPDATE user SET status = 'active' WHERE `user_id` = ?";
 
-    const { password, ...other } = data[0];
+    db.query(q, [user_id], (err, data) => {
+      if (err) return res.status(500).json(err);
+      const q = "SELECT * FROM user WHERE `user_id` = ?";
+      db.query(q, [user_id], (err, data) => {
+        if (err) return res.status(500).json(err);
+        const { password, ...other } = data[0];
 
-    res
-      .cookie("access_token", generateToken(data[0].id), {
-        httpOnly: true,
-      })
-      .status(200)
-      .json(other);
+        res
+          .cookie("access_token", generateToken(data[0].user_id), {
+            httpOnly: true,
+          })
+          .status(200)
+          .json(other);
+      });
+    });
   });
-};
-export const logout = (req, res) => {
+});
+export const logout = asyncHandler((req, res) => {
+  const q = "UPDATE user SET status = 'inactive' WHERE `user_id` = ?";
+  db.query(q, [req.user.user_id], (err, data) => {
+    if (err) return res.status(500).json(err);
+  });
   res
     .clearCookie("access_token", {
       sameSite: "none",
@@ -61,4 +75,4 @@ export const logout = (req, res) => {
     })
     .status(200)
     .json("User has been logged out");
-};
+});
