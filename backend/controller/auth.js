@@ -76,3 +76,22 @@ export const logout = asyncHandler((req, res) => {
     .status(200)
     .json("User has been logged out");
 });
+
+export const updateUserProfile = asyncHandler((req, res) => {
+  const { user_id } = req.user;
+  const salt = bcrypt.genSaltSync(10);
+  const hash = bcrypt.hashSync(req.body.password, salt);
+
+  const values = [
+    req.body.username,
+    req.body.email,
+    hash,
+    req.body.image_avt,
+    user_id,
+  ];
+  const q = `UPDATE user SET username = ?, email = ?, password = ? , image_avt = ? WHERE user_id = ?`;
+  db.query(q, values, (err, data) => {
+    if (err) return res.json(err);
+    return res.status(200).json("User has been updated");
+  });
+});
