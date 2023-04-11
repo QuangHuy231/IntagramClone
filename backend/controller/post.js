@@ -8,7 +8,7 @@ export const createPost = asyncHandler((req, res) => {
   const valueOfPost = [req.user.user_id, req.body.caption, req.body.image_url];
   db.query(queryInsertPosts, [valueOfPost], (err, data) => {
     if (err) return res.status(500).json(err);
-    return res.json("Post has been created successfully");
+    return res.json(data.insertId);
   });
 });
 
@@ -83,7 +83,7 @@ export const getUsersLikePost = asyncHandler((req, res) => {
 export const getUsersCommentPost = asyncHandler((req, res) => {
   const { post_id } = req.params;
   const q = `SELECT user.user_id, user.username, user.status, user.image_avt, comments.comment_id, comments.comment 
-    FROM user INNER JOIN comments ON user.user_id = comments.user_id WHERE comments.post_id = ?`;
+    FROM user INNER JOIN comments ON user.user_id = comments.user_id WHERE comments.post_id = ? ORDER BY comments.comment_date DESC`;
   db.query(q, [post_id], (err, data) => {
     if (err) return res.status(500).json(err);
     return res.json(data);
@@ -136,9 +136,10 @@ export const removeComment = asyncHandler((req, res) => {
 
 export const getPostsUserCreate = asyncHandler((req, res) => {
   const { user_id } = req.params;
-  const q = `SELECT posts.post_id, 
+  const q = `SELECT user.user_id, user.username, user.image_avt, posts.post_id, 
   posts.caption , posts.image_url, posts.post_date, COUNT(likes.post_id) AS num_likes, 
   COUNT(comments.post_id) AS num_comments FROM posts  
+  INNER JOIN user ON user.user_id = posts.user_id
   LEFT JOIN likes ON posts.post_id = likes.post_id 
   LEFT JOIN comments ON posts.post_id = comments.post_id  
   WHERE posts.user_id = ?
@@ -174,9 +175,13 @@ export const searchPosts = asyncHandler((req, res) => {
   db.query(q, (err, data) => {
     if (err) return res.status(500).json(err);
     result.push(...data);
-    const q2 = `SELECT user.user_id, user.username, user.status, user.image_avt, posts.post_id, posts.caption 
-    FROM posts INNER JOIN user ON posts.user_id = user.user_id 
-    WHERE caption LIKE '%${searchTerm}%'`;
+    const q2 = `SELECT user.user_id, user.username, user.status, user.image_avt, 
+    posts.post_id, posts.caption, posts.image_url, posts.post_date, COUNT(likes.post_id) AS num_likes,
+    COUNT(comments.post_id) AS num_comments
+    FROM posts INNER JOIN user ON posts.user_id = user.user_id
+    LEFT JOIN likes ON posts.post_id = likes.post_id
+    LEFT JOIN comments ON posts.post_id = comments.post_id
+    WHERE caption LIKE '%${searchTerm}%' AND posts.post_id IS NOT NULL GROUP BY posts.post_id ORDER BY posts.post_date DESC`;
     db.query(q2, (err, data) => {
       if (err) return res.status(500).json(err);
       result.push(...data);

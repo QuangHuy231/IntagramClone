@@ -9,12 +9,13 @@ import { fileURLToPath } from "url";
 import { dirname } from "path";
 import multer from "multer";
 import fs from "fs";
+import cors from "cors";
 
 const app = express();
 
 dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
-
+app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 app.use(cookieParser());
 app.use(express.json());
 app.use("/uploads", express.static(dirname(__filename) + "/uploads"));

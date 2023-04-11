@@ -46,7 +46,7 @@ router.post("/like-post/:post_id", authMiddleware, likePost);
 router.post("/unlike-post/:post_id", authMiddleware, unLikePost);
 
 router.post("/add-comment/:post_id", authMiddleware, addComment);
-router.post("/remove-comment/:comment_id", authMiddleware, removeComment);
+router.delete("/remove-comment/:comment_id", authMiddleware, removeComment);
 
 router.get("/search", authMiddleware, searchPosts);
 

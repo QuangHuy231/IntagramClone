@@ -79,19 +79,44 @@ export const logout = asyncHandler((req, res) => {
 
 export const updateUserProfile = asyncHandler((req, res) => {
   const { user_id } = req.user;
-  const salt = bcrypt.genSaltSync(10);
-  const hash = bcrypt.hashSync(req.body.password, salt);
+  const { username, email, password, newPassword, image_avt } = req.body;
+  const q = "SELECT * FROM user WHERE user_id = ?";
 
-  const values = [
-    req.body.username,
-    req.body.email,
-    hash,
-    req.body.image_avt,
-    user_id,
-  ];
-  const q = `UPDATE user SET username = ?, email = ?, password = ? , image_avt = ? WHERE user_id = ?`;
-  db.query(q, values, (err, data) => {
+  db.query(q, [user_id], (err, data) => {
     if (err) return res.json(err);
-    return res.status(200).json("User has been updated");
+    if (data.length == 0) return res.status(404).json("User not found!");
+
+    // CHECK PASSWORD
+
+    const isPasswordCorrect = bcrypt.compareSync(
+      req.body.password,
+      data[0].password
+    );
+
+    if (!isPasswordCorrect)
+      return res.status(400).json("Wrong email or password");
+    let user_id = data[0].user_id;
+
+    const salt = bcrypt.genSaltSync(10);
+    const hash = bcrypt.hashSync(req.body.newPassword, salt);
+
+    const q =
+      "UPDATE user SET  username = ?, password= ?, image_avt= ? WHERE `user_id` = ?";
+
+    db.query(q, [username, hash, image_avt, user_id], (err, data) => {
+      if (err) return res.status(500).json(err);
+      const q = "SELECT * FROM user WHERE `user_id` = ?";
+      db.query(q, [user_id], (err, data) => {
+        if (err) return res.status(500).json(err);
+        const { password, ...other } = data[0];
+
+        res
+          .cookie("access_token", generateToken(data[0].user_id), {
+            httpOnly: true,
+          })
+          .status(200)
+          .json(other);
+      });
+    });
   });
 });
