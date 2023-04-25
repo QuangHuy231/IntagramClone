@@ -1,7 +1,8 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import logo from "../assets/instagramlogo.png";
 import { UserContext } from "../context/userContext";
-
+import axios from "axios";
+import ListUsers from "./ListUsers";
 import { Link, NavLink } from "react-router-dom";
 import { RiHomeFill } from "react-icons/ri";
 import { IoIosArrowRoundForward, IoMdNotifications } from "react-icons/io";
@@ -13,7 +14,14 @@ const isActiveStyle =
   "flex items-center px-5 gap-3 font-extrabold border-r-2 border-black transition-all duration-200 ease-in-out capitalize";
 
 const Sidebar = ({ closeToggle }) => {
+  const [usersNotFollowed, setUsersNotFollowed] = useState([]);
   const { user } = useContext(UserContext);
+
+  useEffect(() => {
+    axios.get("/user/user-not-follow").then((res) => {
+      setUsersNotFollowed(res.data);
+    });
+  }, []);
 
   const handleCloseSidebar = () => {
     if (closeToggle) closeToggle(false);
@@ -61,6 +69,10 @@ const Sidebar = ({ closeToggle }) => {
             <AiFillMessage />
             Messages
           </NavLink>
+          <div>
+            <h2 className="text-xl font-semibold ml-4">Who to follow</h2>
+            <ListUsers users={usersNotFollowed} />
+          </div>
         </div>
       </div>
       {user && (

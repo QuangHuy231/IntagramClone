@@ -1,10 +1,16 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { MdDownloadForOffline } from "react-icons/md";
-import { AiTwotoneDelete } from "react-icons/ai";
-import { BsFillArrowRightCircleFill } from "react-icons/bs";
+
+import {
+  AiFillDelete,
+  AiFillLike,
+  AiOutlineComment,
+  AiOutlineLike,
+  AiTwotoneEdit,
+} from "react-icons/ai";
 
 import { UserContext } from "../context/userContext";
+import axios from "axios";
 
 const Pin = ({
   post: {
@@ -22,49 +28,40 @@ const Pin = ({
 
   const { user } = useContext(UserContext);
 
-  // const alreadySaved = !!save?.filter((item) => item.userSave._id === user._id)
-  //   ?.length;
+  const [like, setLike] = useState([]);
+
+  useEffect(() => {
+    axios.get(`/post/get-user-like-post/${post_id}`).then((res) => {
+      setLike(res.data);
+    });
+  }, [post_id]);
+
+  const alreadyLiked = !!like?.filter((item) => item.user_id === user.user_id)
+    ?.length;
 
   //1, [2,3,1] -> [1].length -> 1
   // 4 ,[2,3,1] -> [].length -> 0
 
-  // const savePin = (id) => {
-  //   if (!alreadySaved) {
-  //     axios.put(`/pin/save-pin/${id}`).then(() => {
-  //       window.location.reload();
-  //     });
-  //   } else {
-  //     axios.put(`/pin/unsave-pin/${id}`).then(() => {
-  //       window.location.reload();
-  //     });
-  //   }
-  // };
+  const likePost = (id) => {
+    if (!alreadyLiked) {
+      axios.post(`/post/like-post/${id}`).then(() => {
+        window.location.reload();
+      });
+    } else {
+      axios.post(`/post/unlike-post/${id}`).then(() => {
+        window.location.reload();
+      });
+    }
+  };
 
-  // const deletePin = (id) => {
-  //   axios.delete(`/pin/delete-pin/${id}`).then(() => {
-  //     window.location.reload();
-  //   });
-  // };
+  const deletePost = (id) => {
+    axios.delete(`/post/delete-post/${id}`).then(() => {
+      window.location.reload();
+    });
+  };
 
-  // const handleDownload = (e) => {
-  //   e.stopPropagation();
-  //   const filename = image;
-  //   axios
-  //     .get(`/download/${filename}`, { responseType: "blob" })
-  //     .then((response) => {
-  //       const url = window.URL.createObjectURL(new Blob([response.data]));
-  //       const link = document.createElement("a");
-  //       link.href = url;
-  //       link.setAttribute("download", filename);
-  //       document.body.appendChild(link);
-  //       link.click();
-  //     })
-  //     .catch((error) => {
-  //       console.error(error);
-  //     });
-  // };
   return (
-    <div className="m-2">
+    <div className="m-4 bg-slate-300 rounded-lg p-2">
       {image_url && (
         <div
           // onMouseEnter={() => setPostHovered(true)}
@@ -165,6 +162,57 @@ const Pin = ({
           <p className="font-semibold capitalize">{username}</p>
         </Link>
       )}
+      <div className="mt-3 flex items-center justify-around">
+        {alreadyLiked ? (
+          <div className="flex gap-2 items-center">
+            <AiFillLike
+              fontSize={24}
+              className="cursor-pointer"
+              onClick={(e) => {
+                e.stopPropagation();
+                likePost(post_id);
+              }}
+            />
+            <p className="font-bold text-md">{num_likes}</p>
+          </div>
+        ) : (
+          <div className="flex gap-2 items-center">
+            <AiOutlineLike
+              fontSize={24}
+              className="cursor-pointer"
+              onClick={(e) => {
+                e.stopPropagation();
+                likePost(post_id);
+              }}
+            />
+            <p className="font-bold text-md">{num_likes}</p>
+          </div>
+        )}
+
+        <Link
+          to={`/post-detail/${post_id}`}
+          className="flex gap-2 items-center cursor-pointer"
+        >
+          <AiOutlineComment fontSize={24} />
+          <p className="font-bold text-md">{num_comments}</p>
+        </Link>
+
+        {user_id === user.user_id && (
+          <div className="flex gap-4 items-center">
+            <AiFillDelete
+              fontSize={24}
+              className="cursor-pointer"
+              onClick={(e) => {
+                e.stopPropagation();
+                deletePost(post_id);
+              }}
+            />
+            <Link to={`/update-post/${post_id}`}>
+              <AiTwotoneEdit fontSize={24} />
+            </Link>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

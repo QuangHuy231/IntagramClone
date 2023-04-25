@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { AiOutlineLogout } from "react-icons/ai";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 
 import axios from "axios";
 
@@ -14,7 +14,7 @@ const randomImage =
 const activeBtnStyles =
   "bg-red-500 text-white font-bold p-2 rounded-full w-20 outline-none";
 const notActiveBtnStyles =
-  "bg-primary mr-4 text-black font-bold p-2 rounded-full w-20 outline-none";
+  "bg-primary border text-black font-bold p-2 rounded-full w-20 outline-none";
 
 const UserProfile = () => {
   const [userProfile, setUserProfile] = useState(null);
@@ -79,7 +79,15 @@ const UserProfile = () => {
               {userProfile.username}
             </h1>
           </div>
-          <div className="text-center mb-7">
+
+          <div className="flex justify-between h-20 mt-8 items-center px-20">
+            <p className="font-bold">{userProfile.num_posts} Posts</p>
+
+            <p className="font-bold">{userProfile.num_followers} Followers</p>
+
+            <p className="font-bold">{userProfile.num_following} Followings</p>
+          </div>
+          <div className=" mb-7 flex gap-2 justify-center items-center">
             <button
               type="button"
               onClick={(e) => {
@@ -104,6 +112,14 @@ const UserProfile = () => {
             >
               Liked
             </button>
+            {userProfile.user_id === user.user_id && (
+              <Link
+                to={"/edit-user"}
+                className="bg-primary border text-black font-bold p-2 rounded-full w-32 outline-none text-center"
+              >
+                Edit User
+              </Link>
+            )}
           </div>
           {posts?.length ? (
             <div className="px-2 ">

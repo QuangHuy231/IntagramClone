@@ -1,14 +1,15 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { AiOutlineCloudUpload } from "react-icons/ai";
 
 import { MdDelete } from "react-icons/md";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import axios from "axios";
 import { UserContext } from "../context/userContext";
 import Spinner from "../components/Spinner";
 
 const CreatePost = () => {
+  const { id } = useParams();
   const { user } = useContext(UserContext);
   const [caption, setCaption] = useState("");
   const [loading, setLoading] = useState(false);
@@ -16,6 +17,19 @@ const CreatePost = () => {
   const [imageAsset, setImageAsset] = useState(null);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!id) {
+      return;
+    }
+    const fetchPostDetails = async () => {
+      const { data } = await axios.get(`/post/get-detail-post/${id}`);
+      setCaption(data[0].caption);
+      setImageAsset(data[0].image_url);
+    };
+
+    fetchPostDetails();
+  }, [id]);
 
   const uploadPhoto = (e) => {
     setLoading(true);
@@ -41,9 +55,13 @@ const CreatePost = () => {
         caption,
         image_url: imageAsset,
       };
-      const { data } = await axios.post("/post/create-post", doc);
-
-      navigate(`/post-detail/${data}`);
+      if (id) {
+        await axios.put(`/post/update-post/${id}`, doc);
+        navigate(`/post-detail/${id}`);
+      } else {
+        const { data } = await axios.post("/post/create-post", doc);
+        navigate(`/post-detail/${data}`);
+      }
     } else {
       setFields(true);
       setTimeout(() => setFields(false), 2000);

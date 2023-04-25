@@ -1,10 +1,16 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 import axios from "axios";
 import { UserContext } from "../context/userContext";
 import Spinner from "../components/Spinner";
 import { BsTrash } from "react-icons/bs";
+import {
+  AiFillDelete,
+  AiFillLike,
+  AiOutlineLike,
+  AiTwotoneEdit,
+} from "react-icons/ai";
 
 const PostDetail = () => {
   const { user } = useContext(UserContext);
@@ -14,6 +20,14 @@ const PostDetail = () => {
   const [addingComment, setAddingComment] = useState(false);
 
   const { postId } = useParams();
+
+  const navigate = useNavigate();
+
+  const [like, setLike] = useState([]);
+
+  const alreadyLiked = !!like?.filter((item) => item.user_id === user.user_id)
+    ?.length;
+
   const fetchComments = async () => {
     const { data } = await axios.get(`/post/get-user-comment-post/${postId}`);
     setComments(data);
@@ -43,9 +57,33 @@ const PostDetail = () => {
     fetchComments();
   }, [postId, postDetail?.post_id]);
 
+  useEffect(() => {
+    axios.get(`/post/get-user-like-post/${postDetail?.post_id}`).then((res) => {
+      setLike(res.data);
+    });
+  }, [postDetail?.post_id]);
+
   const removeComment = (commentId) => {
     axios.delete(`/post/remove-comment/${commentId}`).then(() => {
       fetchComments();
+    });
+  };
+
+  const likePost = (id) => {
+    if (!alreadyLiked) {
+      axios.post(`/post/like-post/${id}`).then(() => {
+        window.location.reload();
+      });
+    } else {
+      axios.post(`/post/unlike-post/${id}`).then(() => {
+        window.location.reload();
+      });
+    }
+  };
+
+  const deletePost = (id) => {
+    axios.delete(`/post/delete-post/${id}`).then(() => {
+      navigate("/");
     });
   };
 
@@ -68,17 +106,62 @@ const PostDetail = () => {
           <div>
             <p className="mt-3 ">{postDetail.caption}</p>
           </div>
-          <Link
-            to={`/user-profile/${postDetail.user_id}`}
-            className="flex gap-2 mt-5 item-center bg-white rounded-lg"
-          >
-            <img
-              src={`http://localhost:5000/uploads/${postDetail.image_avt}`}
-              alt="user-profile"
-              className="w-8 h-8 rounded-full object-cover"
-            />
-            <p className="font-semibold capitalize">{postDetail?.username}</p>
-          </Link>
+          <div className="flex justify-between">
+            <Link
+              to={`/user-profile/${postDetail.user_id}`}
+              className="flex gap-2 mt-5 item-center bg-white rounded-lg"
+            >
+              <img
+                src={`http://localhost:5000/uploads/${postDetail.image_avt}`}
+                alt="user-profile"
+                className="w-8 h-8 rounded-full object-cover"
+              />
+              <p className="font-semibold capitalize">{postDetail?.username}</p>
+            </Link>
+
+            {alreadyLiked ? (
+              <div className="flex gap-2 items-center">
+                <AiFillLike
+                  fontSize={24}
+                  className="cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    likePost(postDetail?.post_id);
+                  }}
+                />
+                <p className="font-bold text-md">{postDetail?.num_likes}</p>
+              </div>
+            ) : (
+              <div className="flex gap-2 items-center">
+                <AiOutlineLike
+                  fontSize={24}
+                  className="cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    likePost(postDetail?.post_id);
+                  }}
+                />
+                <p className="font-bold text-md">{postDetail?.num_likes}</p>
+              </div>
+            )}
+
+            {user?.user_id === postDetail?.user_id && (
+              <div className="flex gap-4 items-center">
+                <AiFillDelete
+                  fontSize={24}
+                  className="cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    deletePost(postDetail?.post_id);
+                  }}
+                />
+                <Link to={`/update-post/${postDetail?.post_id}`}>
+                  <AiTwotoneEdit fontSize={24} />
+                </Link>
+              </div>
+            )}
+          </div>
+
           <h2 className="mt-5 text-2xl">Comments</h2>
 
           <div className="max-h-370 overflow-y-auto">

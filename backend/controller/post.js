@@ -169,23 +169,16 @@ export const getPostsUserLike = asyncHandler((req, res) => {
 
 export const searchPosts = asyncHandler((req, res) => {
   const { searchTerm } = req.query;
-  const result = [];
-  const q = `SELECT user_id, username, status, image_avt FROM user 
-  WhERE username LIKE '%${searchTerm}%'`;
-  db.query(q, (err, data) => {
-    if (err) return res.status(500).json(err);
-    result.push(...data);
-    const q2 = `SELECT user.user_id, user.username, user.status, user.image_avt, 
+
+  const q = `SELECT user.user_id, user.username, user.status, user.image_avt, 
     posts.post_id, posts.caption, posts.image_url, posts.post_date, COUNT(likes.post_id) AS num_likes,
     COUNT(comments.post_id) AS num_comments
     FROM posts INNER JOIN user ON posts.user_id = user.user_id
     LEFT JOIN likes ON posts.post_id = likes.post_id
     LEFT JOIN comments ON posts.post_id = comments.post_id
-    WHERE caption LIKE '%${searchTerm}%' AND posts.post_id IS NOT NULL GROUP BY posts.post_id ORDER BY posts.post_date DESC`;
-    db.query(q2, (err, data) => {
-      if (err) return res.status(500).json(err);
-      result.push(...data);
-      return res.json(result);
-    });
+    WHERE caption LIKE '%${searchTerm}%' OR user.username LIKE '%${searchTerm}%' AND posts.post_id IS NOT NULL GROUP BY posts.post_id ORDER BY posts.post_date DESC`;
+  db.query(q, (err, data) => {
+    if (err) return res.status(500).json(err);
+    return res.json(data);
   });
 });

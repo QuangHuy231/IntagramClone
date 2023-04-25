@@ -22,6 +22,7 @@ function App() {
         <Route path="/user-profile/:userId" element={<UserProfile />} />
         <Route path="/post-detail/:postId" element={<PostDetail />} />
         <Route path="/create-post" element={<CreatePost />} />
+        <Route path="/update-post/:id" element={<CreatePost />} />
         <Route path="/search" element={<Search />} />
         <Route path="/*" element={<Page404 />} />
       </Route>

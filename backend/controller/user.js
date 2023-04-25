@@ -88,3 +88,15 @@ export const getFollowings = expressAsyncHandler((req, res) => {
     res.json(data);
   });
 });
+
+export const searchUser = expressAsyncHandler((req, res) => {
+  const { searchTerm } = req.query;
+  const { user_id } = req.user;
+  const q = `SELECT user_id, username, status, image_avt FROM user 
+  WhERE username LIKE '%${searchTerm}%' AND user_id != '${user_id}'`;
+
+  db.query(q, (err, data) => {
+    if (err) return res.status(500).json(err);
+    res.json(data);
+  });
+});

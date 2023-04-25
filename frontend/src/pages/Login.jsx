@@ -12,13 +12,17 @@ const Login = () => {
   const { setUser } = useContext(UserContext);
   const navigate = useNavigate();
   const handleLogin = async () => {
-    const { data } = await axios.post("/auth/login", {
-      email,
-      password,
-    });
-    setUser(data);
-    localStorage.setItem("user", JSON.stringify(data));
-    navigate("/");
+    try {
+      const { data } = await axios.post("/auth/login", {
+        email,
+        password,
+      });
+      setUser(data);
+      localStorage.setItem("user", JSON.stringify(data));
+      navigate("/");
+    } catch (error) {
+      console.log(error.response.data);
+    }
   };
   return (
     <div className="flex justify-start items-center flex-col h-screen">

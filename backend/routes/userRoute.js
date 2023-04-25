@@ -7,6 +7,7 @@ import {
   getUserDetails,
   getUserFollowed,
   getUserNotFollow,
+  searchUser,
   unfollowUser,
 } from "../controller/user.js";
 
@@ -19,4 +20,5 @@ router.post("/unfollow-user/:id", authMiddleware, unfollowUser);
 router.get("/user-details/:user_id", authMiddleware, getUserDetails);
 router.get("/user-follower/:user_id", authMiddleware, getFollowers);
 router.get("/user-following/:user_id", authMiddleware, getFollowings);
+router.get("/search", authMiddleware, searchUser);
 export default router;
