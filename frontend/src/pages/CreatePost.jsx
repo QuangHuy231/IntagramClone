@@ -7,7 +7,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { UserContext } from "../context/userContext";
 import Spinner from "../components/Spinner";
-
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const CreatePost = () => {
   const { id } = useParams();
   const { user } = useContext(UserContext);
@@ -42,8 +43,7 @@ const CreatePost = () => {
         headers: { "Content-Type": "multipart/form-data" },
       })
       .then((res) => {
-        const { data: filename } = res;
-
+        const filename = res.data.secure_url;
         setImageAsset(filename);
         setLoading(false);
       });
@@ -56,11 +56,24 @@ const CreatePost = () => {
         image_url: imageAsset,
       };
       if (id) {
-        await axios.put(`/post/update-post/${id}`, doc);
-        navigate(`/post-detail/${id}`);
+        try {
+          await axios.put(`/post/update-post/${id}`, doc).then((res) => {
+            toast.success(res.data);
+          });
+          navigate(`/post-detail/${id}`);
+        } catch (error) {
+          toast.error(error.response.data);
+        }
       } else {
-        const { data } = await axios.post("/post/create-post", doc);
-        navigate(`/post-detail/${data}`);
+        try {
+          const { data } = await axios.post("/post/create-post", doc);
+
+          toast.success("Post created successfully");
+
+          navigate(`/post-detail/${data}`);
+        } catch (error) {
+          toast.error(error.response.data);
+        }
       }
     } else {
       setFields(true);
@@ -104,7 +117,7 @@ const CreatePost = () => {
             ) : (
               <div className="relative h-full">
                 <img
-                  src={`http://localhost:5000/uploads/${imageAsset}`}
+                  src={`${imageAsset}`}
                   alt="uploaded-pic"
                   className="h-full w-full"
                 />
@@ -131,7 +144,7 @@ const CreatePost = () => {
           {user && (
             <div className="flex gap-2 my-2 items-center bg-wite rounded-lg">
               <img
-                src={`http://localhost:5000/uploads/${user.image_avt}`}
+                src={`${user.image_avt}`}
                 alt="user-profile"
                 className="w-10 h-10 rounded-full"
               />

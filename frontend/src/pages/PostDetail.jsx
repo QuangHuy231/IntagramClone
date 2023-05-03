@@ -11,6 +11,7 @@ import {
   AiOutlineLike,
   AiTwotoneEdit,
 } from "react-icons/ai";
+import { ToastContainer, toast } from "react-toastify";
 
 const PostDetail = () => {
   const { user } = useContext(UserContext);
@@ -72,19 +73,29 @@ const PostDetail = () => {
   const likePost = (id) => {
     if (!alreadyLiked) {
       axios.post(`/post/like-post/${id}`).then(() => {
-        window.location.reload();
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       });
     } else {
       axios.post(`/post/unlike-post/${id}`).then(() => {
-        window.location.reload();
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       });
     }
   };
 
   const deletePost = (id) => {
-    axios.delete(`/post/delete-post/${id}`).then(() => {
-      navigate("/");
-    });
+    try {
+      axios.delete(`/post/delete-post/${id}`).then(() => {
+        toast.success("Deleted successfully");
+
+        navigate("/");
+      });
+    } catch (error) {
+      toast.error(error.response.data);
+    }
   };
 
   if (!postDetail) return <Spinner message="Loading pin ..." />;
@@ -97,7 +108,7 @@ const PostDetail = () => {
       >
         <div className="flex justify-center items-center md:items-start flex-initial">
           <img
-            src={`http://localhost:5000/uploads/${postDetail.image_url}`}
+            src={postDetail.image_url}
             className="rounded-t-3xl rounded-b-lg"
             alt="user-post"
           />
@@ -112,7 +123,7 @@ const PostDetail = () => {
               className="flex gap-2 mt-5 item-center bg-white rounded-lg"
             >
               <img
-                src={`http://localhost:5000/uploads/${postDetail.image_avt}`}
+                src={postDetail.image_avt}
                 alt="user-profile"
                 className="w-8 h-8 rounded-full object-cover"
               />
@@ -170,7 +181,7 @@ const PostDetail = () => {
                 <div className="flex gap-2 mt-5 items-center bg-white rounded-lg">
                   <Link to={`/user-profile/${comment?.user_id}`}>
                     <img
-                      src={`http://localhost:5000/uploads/${comment?.image_avt}`}
+                      src={comment?.image_avt}
                       alt="user-profile"
                       className="w-10 h-10 rounded-full cursor-pointer"
                     />
@@ -197,7 +208,7 @@ const PostDetail = () => {
           <div className="flex flex-wrap mt-6 gap-3">
             <Link to={`/user-profile/${user?.user_id}`}>
               <img
-                src={`http://localhost:5000/uploads/${user?.image_avt}`}
+                src={user?.image_avt}
                 alt="user-profile"
                 className="w-10 h-10 rounded-full cursor-pointer"
               />

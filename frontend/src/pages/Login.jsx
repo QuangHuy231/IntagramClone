@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import shareVideo from "../assets/share.mp4";
 import axios from "axios";
 import { UserContext } from "../context/userContext";
+import { ToastContainer, toast } from "react-toastify";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -19,9 +20,11 @@ const Login = () => {
       });
       setUser(data);
       localStorage.setItem("user", JSON.stringify(data));
+      toast.success("Login Successfully");
+
       navigate("/");
     } catch (error) {
-      console.log(error.response.data);
+      toast.error(error.response.data);
     }
   };
   return (
@@ -71,6 +74,18 @@ const Login = () => {
           </div>
         </div>
       </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={500}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
     </div>
   );
 };

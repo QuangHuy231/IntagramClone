@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { UserContext } from "../context/userContext";
+import { toast } from "react-toastify";
 
 const User = ({ value }) => {
   const { user } = useContext(UserContext);
@@ -18,15 +19,29 @@ const User = ({ value }) => {
   )?.length;
 
   const unFollowUser = (user_id) => {
-    axios.post(`/user/unfollow-user/${user_id}`).then((res) => {
-      window.location.reload();
-    });
+    try {
+      axios.post(`/user/unfollow-user/${user_id}`).then((res) => {
+        toast.success(res.data);
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      });
+    } catch (error) {
+      toast.error(error.response.data);
+    }
   };
 
   const followUser = (user_id) => {
-    axios.post(`/user/follow-user/${user_id}`).then((res) => {
-      window.location.reload();
-    });
+    try {
+      axios.post(`/user/follow-user/${user_id}`).then((res) => {
+        toast.success(res.data);
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      });
+    } catch (error) {
+      toast.error(error.response.data);
+    }
   };
 
   return (
@@ -39,7 +54,7 @@ const User = ({ value }) => {
         className="flex gap-2 mt-2 item-center"
       >
         <img
-          src={`http://localhost:5000/uploads/${image_avt}`}
+          src={image_avt}
           alt="user-profile"
           className="w-8 h-8 rounded-full object-cover"
         />

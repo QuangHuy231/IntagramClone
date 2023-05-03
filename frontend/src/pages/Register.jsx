@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import logo from "../assets/instagramlogo.png";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
 
 const Register = () => {
   const [email, setEmail] = useState("");
@@ -10,13 +11,18 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const handleRegister = async () => {
-    await axios.post("/auth/register", {
-      email,
-      username: userName,
-      password,
-    });
+    try {
+      await axios.post("/auth/register", {
+        email,
+        username: userName,
+        password,
+      });
+      toast.success("Register Successfully");
 
-    navigate("/login");
+      navigate("/login");
+    } catch (error) {
+      toast.error(error.response.data);
+    }
   };
 
   return (
@@ -64,6 +70,18 @@ const Register = () => {
           </Link>
         </p>
       </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={500}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
     </div>
   );
 };

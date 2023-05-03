@@ -82,7 +82,7 @@ const Sidebar = ({ closeToggle }) => {
           onClick={handleCloseSidebar}
         >
           <img
-            src={`http://localhost:5000/uploads/${user.image_avt}`}
+            src={user.image_avt}
             className="w-10 h-10 rounded-full"
             alt="user-profile"
           />

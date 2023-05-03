@@ -4,15 +4,20 @@ import { UserContext } from "../context/userContext";
 import { IoMdAdd, IoMdSearch } from "react-icons/io";
 import { AiOutlineLogout } from "react-icons/ai";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const { user, searchTerm, setSearchTerm, setUser } = useContext(UserContext);
   const handleLogout = async () => {
-    await axios.post("/auth/logout");
-    setUser(null);
-    localStorage.clear();
-    navigate("/login");
+    try {
+      await axios.post("/auth/logout");
+      setUser(null);
+      localStorage.clear();
+      navigate("/login");
+    } catch (error) {
+      toast.error(error.response.data);
+    }
   };
 
   return (
@@ -31,7 +36,7 @@ const Navbar = () => {
       <div className="flex gap-3">
         <Link to={`/user-profile/${user?.user_id}`} className="hidden md:block">
           <img
-            src={`http://localhost:5000/uploads/${user?.image_avt}`}
+            src={`${user?.image_avt}`}
             alt="user"
             className="w-14 h-12 rounded-lg"
           />

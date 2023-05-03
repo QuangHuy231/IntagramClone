@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { UserContext } from "../context/userContext";
 import Spinner from "../components/Spinner";
+import { toast } from "react-toastify";
 
 const UpdateUser = () => {
   const { user } = useContext(UserContext);
@@ -27,23 +28,30 @@ const UpdateUser = () => {
         headers: { "Content-Type": "multipart/form-data" },
       })
       .then((res) => {
-        const { data: filename } = res;
+        const filename = res.data.secure_url;
         setImageAsset(filename);
         setLoading(false);
       });
   };
 
   const updateUser = async () => {
-    if (userName && imageAsset) {
-      const doc = {
-        email: user.email,
-        username: userName,
-        image_avt: imageAsset,
-        password,
-      };
-      const { data } = await axios.put("/auth/update-profile", doc);
-      localStorage.setItem("user", JSON.stringify(data));
-      navigate(`/user-profile/${data.user_id}`);
+    try {
+      if (userName && imageAsset && password) {
+        const doc = {
+          email: user.email,
+          username: userName,
+          image_avt: imageAsset,
+          password,
+        };
+        const { data } = await axios.put("/auth/update-profile", doc);
+        localStorage.setItem("user", JSON.stringify(data));
+        toast.success("Update successfully");
+        navigate(`/user-profile/${data.user_id}`);
+      } else {
+        toast.error("Please enter full information");
+      }
+    } catch (error) {
+      toast.error(error.response.data);
     }
   };
 
@@ -78,7 +86,7 @@ const UpdateUser = () => {
             ) : (
               <div className="relative h-full">
                 <img
-                  src={`http://localhost:5000/uploads/${imageAsset}`}
+                  src={imageAsset}
                   alt="uploaded-pic"
                   className="h-full w-full"
                 />

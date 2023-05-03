@@ -11,6 +11,7 @@ import {
 
 import { UserContext } from "../context/userContext";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const Pin = ({
   post: {
@@ -55,9 +56,18 @@ const Pin = ({
   };
 
   const deletePost = (id) => {
-    axios.delete(`/post/delete-post/${id}`).then(() => {
-      window.location.reload();
-    });
+    axios
+      .delete(`/post/delete-post/${id}`)
+      .then(() => {
+        toast.success("Deleted successfully");
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      })
+      .catch((err) => {
+        toast.error(err.response.data);
+      });
   };
 
   return (
@@ -73,7 +83,7 @@ const Pin = ({
             loading="lazy"
             className="rounded-lg w-full"
             alt="user-post"
-            src={`http://localhost:5000/uploads/${image_url}`}
+            src={image_url}
           />
           {/* {postHovered && (
           <div
@@ -155,7 +165,7 @@ const Pin = ({
           className="flex gap-2 mt-2 item-center"
         >
           <img
-            src={`http://localhost:5000/uploads/${image_avt}`}
+            src={`${image_avt}`}
             alt="user-profile"
             className="w-8 h-8 rounded-full object-cover"
           />

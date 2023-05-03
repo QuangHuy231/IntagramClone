@@ -1,11 +1,12 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { UserContext } from "../context/userContext";
-import { Link, Navigate, Outlet, useNavigate } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import { HiMenu } from "react-icons/hi";
 import Sidebar from "../components/Sidebar";
 import logo from "../assets/instagramlogo.png";
 import { AiFillCloseCircle } from "react-icons/ai";
 import Navbar from "../components/Navbar";
+import { ToastContainer } from "react-toastify";
 
 const Home = () => {
   const { user } = useContext(UserContext);
@@ -35,11 +36,7 @@ const Home = () => {
             <img src={logo} alt="logo" className="w-28" />
           </Link>
           <Link to={`/user-profile/${user?.user_id}`}>
-            <img
-              src={`http://localhost:5000/uploads/${user?.image_avt}`}
-              alt="logo"
-              className="w-28"
-            />
+            <img src={user?.image_avt} alt="logo" className="w-28" />
           </Link>
         </div>
         {toogleSidebar && (
@@ -63,6 +60,18 @@ const Home = () => {
           <Outlet />
         </div>
       </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={500}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
     </div>
   );
 };

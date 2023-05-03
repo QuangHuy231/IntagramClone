@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { AiOutlineLogout } from "react-icons/ai";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 
 import axios from "axios";
 
@@ -22,10 +21,10 @@ const UserProfile = () => {
   const [posts, setPosts] = useState(null);
   const [text, setText] = useState("Created");
   const [activeBtn, setActiveBtn] = useState("created");
-  const navigate = useNavigate();
+
   const { userId } = useParams();
 
-  const { user, setUser } = useContext(UserContext);
+  const { user } = useContext(UserContext);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -71,7 +70,7 @@ const UserProfile = () => {
               alt="banner-pic"
             />
             <img
-              src={`http://localhost:5000/uploads/${userProfile.image_avt}`}
+              src={userProfile.image_avt}
               alt="user-pic"
               className="rounded-full w-20 h-20 -mt-10 shadow-xl object-cover"
             />
