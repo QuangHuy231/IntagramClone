@@ -44,13 +44,17 @@ export const deletePost = asyncHandler(async (req, res) => {
 export const getAllPostOfFollowing = asyncHandler((req, res) => {
   const { user_id } = req.user;
   const q = `SELECT DISTINCT user.user_id, user.username, user.status, user.image_avt, posts.post_id, 
-  posts.caption , posts.image_url, posts.post_date, COUNT(likes.post_id) AS num_likes, 
-  COUNT(comments.post_id) AS num_comments FROM user INNER JOIN posts ON user.user_id = posts.user_id 
-  LEFT JOIN likes ON posts.post_id = likes.post_id 
-  LEFT JOIN comments ON posts.post_id = comments.post_id 
-  LEFT JOIN follows ON user.user_id = follows.following_id 
-  WHERE follows.follower_id = ? OR posts.user_id = ? 
-  GROUP BY posts.post_id ORDER BY posts.post_date DESC`;
+  posts.caption , posts.image_url, posts.post_date, COUNT(DISTINCT likes.user_id) AS num_likes, 
+  COUNT(DISTINCT comments.comment_id) AS num_comments 
+FROM user 
+INNER JOIN posts ON user.user_id = posts.user_id 
+LEFT JOIN likes ON posts.post_id = likes.post_id 
+LEFT JOIN comments ON posts.post_id = comments.post_id 
+LEFT JOIN follows ON user.user_id = follows.following_id 
+WHERE follows.follower_id = ? OR posts.user_id = ? 
+GROUP BY posts.post_id 
+ORDER BY posts.post_date DESC;
+`;
   db.query(q, [user_id, user_id], (err, data) => {
     if (err) return res.status(500).json(err);
     return res.json(data);

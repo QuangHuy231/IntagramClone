@@ -10,6 +10,7 @@ import PostDetail from "./pages/PostDetail";
 import CreatePost from "./pages/CreatePost";
 import Search from "./components/Search";
 import Page404 from "./pages/Page404";
+import UpdateUser from "./pages/UpdateUser";
 
 axios.defaults.baseURL = "http://localhost:5000";
 axios.defaults.withCredentials = true;
@@ -23,6 +24,7 @@ function App() {
         <Route path="/post-detail/:postId" element={<PostDetail />} />
         <Route path="/create-post" element={<CreatePost />} />
         <Route path="/update-post/:id" element={<CreatePost />} />
+        <Route path="/edit-user" element={<UpdateUser />} />
         <Route path="/search" element={<Search />} />
         <Route path="/*" element={<Page404 />} />
       </Route>

@@ -1,4 +1,5 @@
-import { createContext, useState } from "react";
+import axios from "axios";
+import { createContext, useEffect, useState } from "react";
 
 export const UserContext = createContext({});
 
@@ -8,6 +9,12 @@ export function UserContextProvider({ children }) {
   );
 
   const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    axios.get(`/auth/get-user`).then(({ data }) => {
+      setUser(data);
+    });
+  }, [user]);
 
   return (
     <UserContext.Provider value={{ user, setUser, searchTerm, setSearchTerm }}>

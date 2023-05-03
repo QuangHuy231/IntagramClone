@@ -79,7 +79,7 @@ export const logout = asyncHandler((req, res) => {
 
 export const updateUserProfile = asyncHandler((req, res) => {
   const { user_id } = req.user;
-  const { username, email, password, newPassword, image_avt } = req.body;
+  const { username, email, password, image_avt } = req.body;
   const q = "SELECT * FROM user WHERE user_id = ?";
 
   db.query(q, [user_id], (err, data) => {
@@ -88,22 +88,15 @@ export const updateUserProfile = asyncHandler((req, res) => {
 
     // CHECK PASSWORD
 
-    const isPasswordCorrect = bcrypt.compareSync(
-      req.body.password,
-      data[0].password
-    );
+    const isPasswordCorrect = bcrypt.compareSync(password, data[0].password);
 
-    if (!isPasswordCorrect)
+    if (!isPasswordCorrect || data[0].email !== email)
       return res.status(400).json("Wrong email or password");
     let user_id = data[0].user_id;
 
-    const salt = bcrypt.genSaltSync(10);
-    const hash = bcrypt.hashSync(req.body.newPassword, salt);
+    const q = "UPDATE user SET  username = ?, image_avt= ? WHERE `user_id` = ?";
 
-    const q =
-      "UPDATE user SET  username = ?, password= ?, image_avt= ? WHERE `user_id` = ?";
-
-    db.query(q, [username, hash, image_avt, user_id], (err, data) => {
+    db.query(q, [username, image_avt, user_id], (err, data) => {
       if (err) return res.status(500).json(err);
       const q = "SELECT * FROM user WHERE `user_id` = ?";
       db.query(q, [user_id], (err, data) => {
@@ -118,5 +111,15 @@ export const updateUserProfile = asyncHandler((req, res) => {
           .json(other);
       });
     });
+  });
+});
+
+export const getUserProfile = asyncHandler((req, res) => {
+  const { user_id } = req.user;
+  const q = "SELECT * FROM user WHERE `user_id` = ?";
+  db.query(q, [user_id], (err, data) => {
+    if (err) return res.status(500).json(err);
+    const { password, ...other } = data[0];
+    res.status(200).json(other);
   });
 });

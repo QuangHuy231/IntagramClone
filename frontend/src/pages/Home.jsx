@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { UserContext } from "../context/userContext";
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Link, Navigate, Outlet, useNavigate } from "react-router-dom";
 import { HiMenu } from "react-icons/hi";
 import Sidebar from "../components/Sidebar";
 import logo from "../assets/instagramlogo.png";
@@ -11,13 +11,13 @@ const Home = () => {
   const { user } = useContext(UserContext);
   const [toogleSidebar, setToggleSidebar] = useState(false);
   const navigate = useNavigate();
+
+  const scrollRef = useRef();
   useEffect(() => {
     if (!user) {
       navigate("/login");
     }
   });
-
-  const scrollRef = useRef();
 
   return (
     <div className="flex bg-gray-50 md:flex-row flex-col h-screen transaction-height duration-75 ease-out">
