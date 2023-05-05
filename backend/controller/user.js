@@ -100,3 +100,25 @@ export const searchUser = expressAsyncHandler((req, res) => {
     res.json(data);
   });
 });
+
+export const getFriends = expressAsyncHandler((req, res) => {
+  const q = `
+  SELECT user_id, username, status, image_avt FROM user
+  WHERE user_id IN
+  (                                            
+    SELECT follower_id                                            
+    FROM follows                                            
+    WHERE following_id = ?
+  ) 
+  AND user_id IN 
+  (                                           
+    SELECT following_id                                            
+    FROM follows                                            
+    WHERE follower_id = ?
+    )`;
+
+  db.query(q, [req.user.user_id, req.user.user_id], (err, data) => {
+    if (err) return res.status(500).json(err);
+    res.json(data);
+  });
+});

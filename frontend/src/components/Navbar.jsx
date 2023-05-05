@@ -34,12 +34,18 @@ const Navbar = () => {
         />
       </div>
       <div className="flex gap-3">
-        <Link to={`/user-profile/${user?.user_id}`} className="hidden md:block">
+        <Link
+          to={`/user-profile/${user?.user_id}`}
+          className="relative hidden md:block"
+        >
           <img
             src={`${user?.image_avt}`}
             alt="user"
             className="w-14 h-12 rounded-lg"
           />
+          {user?.status === "active" && (
+            <div className="absolute w-3 h-3 border-2 rounded-full bg-green-500 bottom-0 right-0"></div>
+          )}
         </Link>
         <Link
           to="create-post"

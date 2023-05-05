@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 
 const User = ({ value }) => {
   const { user } = useContext(UserContext);
-  const { user_id, username, image_avt } = value;
+  const { user_id, username, image_avt, status } = value;
   const [following, setFollowing] = useState([]);
   useEffect(() => {
     axios.get(`/user/user-following/${user?.user_id}`).then((res) => {
@@ -53,11 +53,17 @@ const User = ({ value }) => {
         to={`/user-profile/${user_id}`}
         className="flex gap-2 mt-2 item-center"
       >
-        <img
-          src={image_avt}
-          alt="user-profile"
-          className="w-8 h-8 rounded-full object-cover"
-        />
+        <div className="relative">
+          <img
+            src={image_avt}
+            alt="user-profile"
+            className="w-8 h-8 rounded-full object-cover"
+          />
+          {status === "active" && (
+            <div className="absolute w-3 h-3 border-2 rounded-full bg-green-500 bottom-0 right-0"></div>
+          )}
+        </div>
+
         <p className="font-semibold capitalize">{username}</p>
       </Link>
 

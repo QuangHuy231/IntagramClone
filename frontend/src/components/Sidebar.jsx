@@ -48,7 +48,7 @@ const Sidebar = ({ closeToggle }) => {
             Home
           </NavLink>
 
-          <NavLink
+          {/* <NavLink
             to={`/notifications`}
             className={({ isActive }) =>
               isActive ? isActiveStyle : isNotActiveStyle
@@ -57,7 +57,7 @@ const Sidebar = ({ closeToggle }) => {
           >
             <IoMdNotifications />
             Notifications
-          </NavLink>
+          </NavLink> */}
 
           <NavLink
             to={`/messages`}
@@ -81,11 +81,16 @@ const Sidebar = ({ closeToggle }) => {
           className="flex my-5 mb-3 gap-2 p-2 items-center bg-white rounded-lg shadow-lg mx-3"
           onClick={handleCloseSidebar}
         >
-          <img
-            src={user.image_avt}
-            className="w-10 h-10 rounded-full"
-            alt="user-profile"
-          />
+          <div className="relative">
+            <img
+              src={user.image_avt}
+              className="w-10 h-10 rounded-full"
+              alt="user-profile"
+            />
+            {user.status === "active" && (
+              <div className="absolute w-3 h-3 border-2 rounded-full bg-green-500 bottom-0 right-0"></div>
+            )}
+          </div>
 
           <p>{user.username}</p>
           <IoIosArrowRoundForward fontSize={40} />

@@ -11,6 +11,7 @@ import CreatePost from "./pages/CreatePost";
 import Search from "./components/Search";
 import Page404 from "./pages/Page404";
 import UpdateUser from "./pages/UpdateUser";
+import Messages from "./pages/Messages";
 
 axios.defaults.baseURL = "http://localhost:5000";
 axios.defaults.withCredentials = true;
@@ -28,7 +29,7 @@ function App() {
         <Route path="/search" element={<Search />} />
         <Route path="/*" element={<Page404 />} />
       </Route>
-
+      <Route path="/messages" element={<Messages />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
     </Routes>

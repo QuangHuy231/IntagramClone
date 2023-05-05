@@ -11,9 +11,11 @@ export function UserContextProvider({ children }) {
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    axios.get(`/auth/get-user`).then(({ data }) => {
-      setUser(data);
-    });
+    if (!user) {
+      axios.get(`/auth/get-user`).then(({ data }) => {
+        setUser(data);
+      });
+    }
   }, [user]);
 
   return (

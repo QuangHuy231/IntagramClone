@@ -122,11 +122,16 @@ const PostDetail = () => {
               to={`/user-profile/${postDetail.user_id}`}
               className="flex gap-2 mt-5 item-center bg-white rounded-lg"
             >
-              <img
-                src={postDetail.image_avt}
-                alt="user-profile"
-                className="w-8 h-8 rounded-full object-cover"
-              />
+              <div className="relative">
+                <img
+                  src={postDetail.image_avt}
+                  alt="user-profile"
+                  className="w-8 h-8 rounded-full object-cover"
+                />
+                {postDetail.status === "active" && (
+                  <div className="absolute w-3 h-3 border-2 rounded-full bg-green-500 bottom-0 right-0"></div>
+                )}
+              </div>
               <p className="font-semibold capitalize">{postDetail?.username}</p>
             </Link>
 
@@ -179,12 +184,18 @@ const PostDetail = () => {
             {comments?.map((comment, i) => (
               <div className="flex justify-between items-center" key={i}>
                 <div className="flex gap-2 mt-5 items-center bg-white rounded-lg">
-                  <Link to={`/user-profile/${comment?.user_id}`}>
+                  <Link
+                    to={`/user-profile/${comment?.user_id}`}
+                    className="relative"
+                  >
                     <img
                       src={comment?.image_avt}
                       alt="user-profile"
                       className="w-10 h-10 rounded-full cursor-pointer"
                     />
+                    {comment.status === "active" && (
+                      <div className="absolute w-3 h-3 border-2 rounded-full bg-green-500 bottom-0 right-0"></div>
+                    )}
                   </Link>
 
                   <div className="flex flex-col ">
@@ -206,12 +217,15 @@ const PostDetail = () => {
             ))}
           </div>
           <div className="flex flex-wrap mt-6 gap-3">
-            <Link to={`/user-profile/${user?.user_id}`}>
+            <Link to={`/user-profile/${user?.user_id}`} className="relative">
               <img
                 src={user?.image_avt}
                 alt="user-profile"
                 className="w-10 h-10 rounded-full cursor-pointer"
               />
+              {user?.status === "active" && (
+                <div className="absolute w-3 h-3 border-2 rounded-full bg-green-500 bottom-0 right-0"></div>
+              )}
             </Link>
             <input
               className="flex-1 border-gray-100 outline-none border-2 p-2 rounded-2xl focus:border-gray-300"

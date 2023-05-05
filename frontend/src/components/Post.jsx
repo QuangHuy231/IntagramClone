@@ -23,6 +23,7 @@ const Pin = ({
     post_date,
     num_likes,
     num_comments,
+    status,
   },
 }) => {
   const navigate = useNavigate();
@@ -164,11 +165,17 @@ const Pin = ({
           to={`/user-profile/${user_id}`}
           className="flex gap-2 mt-2 item-center"
         >
-          <img
-            src={`${image_avt}`}
-            alt="user-profile"
-            className="w-8 h-8 rounded-full object-cover"
-          />
+          <div className="relative">
+            <img
+              src={`${image_avt}`}
+              alt="user-profile"
+              className="w-8 h-8 rounded-full object-cover"
+            />
+            {status === "active" && (
+              <div className="absolute w-3 h-3 border-2 rounded-full bg-green-500 bottom-0 right-0"></div>
+            )}
+          </div>
+
           <p className="font-semibold capitalize">{username}</p>
         </Link>
       )}

@@ -143,11 +143,16 @@ const CreatePost = () => {
           />
           {user && (
             <div className="flex gap-2 my-2 items-center bg-wite rounded-lg">
-              <img
-                src={`${user.image_avt}`}
-                alt="user-profile"
-                className="w-10 h-10 rounded-full"
-              />
+              <div className="relative">
+                <img
+                  src={`${user.image_avt}`}
+                  alt="user-profile"
+                  className="w-10 h-10 rounded-full"
+                />
+                {user.status === "active" && (
+                  <div className="absolute w-3 h-3 border-2 rounded-full bg-green-500 bottom-0 right-0"></div>
+                )}
+              </div>
               <p className="font-bold">{user.username}</p>
             </div>
           )}

@@ -69,11 +69,16 @@ const UserProfile = () => {
               className="w-full h-370 2xl:h-510 shadow-lg object-cover"
               alt="banner-pic"
             />
-            <img
-              src={userProfile.image_avt}
-              alt="user-pic"
-              className="rounded-full w-20 h-20 -mt-10 shadow-xl object-cover"
-            />
+            <div className="relative">
+              <img
+                src={userProfile.image_avt}
+                alt="user-pic"
+                className="rounded-full w-20 h-20 -mt-10 shadow-xl object-cover"
+              />
+              {userProfile.status === "active" && (
+                <div className="absolute w-3 h-3 border-2 rounded-full bg-green-500 bottom-0 right-0"></div>
+              )}
+            </div>
             <h1 className="font-bold text-3xl text-center mt-3">
               {userProfile.username}
             </h1>
