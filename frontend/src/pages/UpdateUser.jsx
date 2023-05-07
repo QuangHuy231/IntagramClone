@@ -47,6 +47,7 @@ const UpdateUser = () => {
         localStorage.setItem("user", JSON.stringify(data));
         toast.success("Update successfully");
         navigate(`/user-profile/${data.user_id}`);
+        window.location.reload();
       } else {
         toast.error("Please enter full information");
       }
