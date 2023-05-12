@@ -33,6 +33,7 @@ export const theme = {
       370: "370px",
     },
     minWidth: {
+      190: "190px",
       210: "210px",
       350: "350px",
       620: "620px",

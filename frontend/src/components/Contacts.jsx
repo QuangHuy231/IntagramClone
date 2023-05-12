@@ -93,7 +93,7 @@ const Container = styled.div`
       min-height: 5rem;
       cursor: pointer;
       width: 90%;
-      border-radius: 0.2rem;
+      border-radius: 1rem;
       padding: 0.4rem;
       display: flex;
       gap: 1rem;
@@ -102,6 +102,7 @@ const Container = styled.div`
       .avatar {
         img {
           height: 3rem;
+          border-radius: 0.5rem;
         }
       }
       .username {
@@ -117,6 +118,7 @@ const Container = styled.div`
 
   .current-user {
     background-color: #0d0d30;
+    border-radius: 1rem;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -125,6 +127,7 @@ const Container = styled.div`
       img {
         height: 4rem;
         max-inline-size: 100%;
+        border-radius: 0.5rem;
       }
     }
     .username {

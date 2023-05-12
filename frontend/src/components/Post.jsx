@@ -20,10 +20,10 @@ const Pin = ({
     image_avt,
     post_id,
     image_url,
-    post_date,
     num_likes,
     num_comments,
     status,
+    caption,
   },
 }) => {
   const navigate = useNavigate();
@@ -86,78 +86,6 @@ const Pin = ({
             alt="user-post"
             src={image_url}
           />
-          {/* {postHovered && (
-          <div
-            className="absolute top-0 w-full h-full flex flex-col justify-between p-1 pt-2 pb-2 z-50"
-            style={{ height: "100%" }}
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex gap-2">
-                <a
-                  href={`http://localhost:5000/uploads/${image}`}
-                  //chỉ tải không chuyển đến trang pin detail
-                  target="_blank"
-                  onClick={handleDownload}
-                  download
-                  className="bg-white w-9 h-9 rounded-full flex items-center justify-center text-dark text-xl opacity-75 hover:opacity-100 hover:shadow-md outline-none"
-                  rel="noreferrer"
-                >
-                  <MdDownloadForOffline />
-                </a>
-              </div>
-              {alreadySaved ? (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    savePin(_id);
-                  }}
-                  type="button"
-                  className="bg-red-500 opacity-70 hover:opacity-100 text-white font-bold px-5 py-1 text-base rounded-3xl hover:shadow-md outline-none"
-                >
-                  {save?.length} Saved
-                </button>
-              ) : (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    savePin(_id);
-                  }}
-                  type="button"
-                  className="bg-red-500 opacity-70 hover:opacity-100 text-white font-bold px-5 py-1 text-base rounded-3xl hover:shadow-md outline-none"
-                >
-                  Save
-                </button>
-              )}
-            </div>
-            <div className="flex justify-between items-center gap-2 w-full">
-              {destinantion && (
-                <a
-                  href={destinantion}
-                  target="_blank"
-                  rel="noneferrer noreferrer"
-                  className="bg-white flex items-center gap-2 text-black font-bold p-2 pl-4 pr-4 rounded-full opacity-70 hover:100 hover:shadow-md"
-                >
-                  <BsFillArrowRightCircleFill />
-                  {destinantion.length > 15
-                    ? `${destinantion.slice(0, 15)}...`
-                    : destinantion}
-                </a>
-              )}
-              {postedBy?._id === user._id && (
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    deletePin(_id);
-                  }}
-                  className="bg-white p-2 opacity-70 hover:opacity-100  font-bold text-dark text-base rounded-3xl hover:shadow-md outline-none mr-4"
-                >
-                  <AiTwotoneDelete />
-                </button>
-              )}
-            </div>
-          </div>
-        )} */}
         </div>
       )}
       {user_id && (
@@ -179,6 +107,7 @@ const Pin = ({
           <p className="font-semibold capitalize">{username}</p>
         </Link>
       )}
+      <p className="text-sm ml-3 mt-2">{caption}</p>
       <div className="mt-3 flex items-center justify-around">
         {alreadyLiked ? (
           <div className="flex gap-2 items-center">

@@ -114,9 +114,6 @@ const PostDetail = () => {
           />
         </div>
         <div className="w-full p-5 flex-1 xl:min-w-620">
-          <div>
-            <p className="mt-3 ">{postDetail.caption}</p>
-          </div>
           <div className="flex justify-between">
             <Link
               to={`/user-profile/${postDetail.user_id}`}
@@ -176,6 +173,9 @@ const PostDetail = () => {
                 </Link>
               </div>
             )}
+          </div>
+          <div>
+            <p className="mt-3 text-xl">{postDetail.caption}</p>
           </div>
 
           <h2 className="mt-5 text-2xl">Comments</h2>
