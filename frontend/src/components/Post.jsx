@@ -14,28 +14,28 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 const Pin = ({
-  post: {
-    user_id,
-    username,
-    image_avt,
-    post_id,
-    image_url,
-    num_likes,
-    num_comments,
-    status,
-    caption,
-  },
+  post: { user_id, username, image_avt, post_id, image_url, status, caption },
 }) => {
   const navigate = useNavigate();
+  const [postDetail, setPostDetail] = useState(null);
 
   const { user } = useContext(UserContext);
 
   const [like, setLike] = useState([]);
 
+  const fetchLikes = async () => {
+    const { data } = await axios.get(`/post/get-user-like-post/${post_id}`);
+    setLike(data);
+  };
+
+  const fetchPostDetails = async () => {
+    const { data } = await axios.get(`/post/get-detail-post/${post_id}`);
+    setPostDetail(data[0]);
+  };
+
   useEffect(() => {
-    axios.get(`/post/get-user-like-post/${post_id}`).then((res) => {
-      setLike(res.data);
-    });
+    fetchPostDetails();
+    fetchLikes();
   }, [post_id]);
 
   const alreadyLiked = !!like?.filter((item) => item.user_id === user.user_id)
@@ -47,11 +47,13 @@ const Pin = ({
   const likePost = (id) => {
     if (!alreadyLiked) {
       axios.post(`/post/like-post/${id}`).then(() => {
-        window.location.reload();
+        fetchLikes();
+        fetchPostDetails();
       });
     } else {
       axios.post(`/post/unlike-post/${id}`).then(() => {
-        window.location.reload();
+        fetchLikes();
+        fetchPostDetails();
       });
     }
   };
@@ -91,7 +93,7 @@ const Pin = ({
       {user_id && (
         <Link
           to={`/user-profile/${user_id}`}
-          className="flex gap-2 mt-2 item-center"
+          className="flex gap-2 mt-2 items-center"
         >
           <div className="relative">
             <img
@@ -119,7 +121,7 @@ const Pin = ({
                 likePost(post_id);
               }}
             />
-            <p className="font-bold text-md">{num_likes}</p>
+            <p className="font-bold text-md">{postDetail?.num_likes}</p>
           </div>
         ) : (
           <div className="flex gap-2 items-center">
@@ -131,7 +133,7 @@ const Pin = ({
                 likePost(post_id);
               }}
             />
-            <p className="font-bold text-md">{num_likes}</p>
+            <p className="font-bold text-md">{postDetail?.num_likes}</p>
           </div>
         )}
 
@@ -140,7 +142,7 @@ const Pin = ({
           className="flex gap-2 items-center cursor-pointer"
         >
           <AiOutlineComment fontSize={24} />
-          <p className="font-bold text-md">{num_comments}</p>
+          <p className="font-bold text-md">{postDetail?.num_comments}</p>
         </Link>
 
         {user_id === user.user_id && (

@@ -33,6 +33,12 @@ const PostDetail = () => {
     const { data } = await axios.get(`/post/get-user-comment-post/${postId}`);
     setComments(data);
   };
+
+  const fetchLikes = async () => {
+    const { data } = await axios.get(`/post/get-user-like-post/${postId}`);
+    setLike(data);
+  };
+
   const fetchPostDetails = async () => {
     const { data } = await axios.get(`/post/get-detail-post/${postId}`);
     setPostDetail(data[0]);
@@ -56,13 +62,8 @@ const PostDetail = () => {
   useEffect(() => {
     fetchPostDetails();
     fetchComments();
+    fetchLikes();
   }, [postId, postDetail?.post_id]);
-
-  useEffect(() => {
-    axios.get(`/post/get-user-like-post/${postDetail?.post_id}`).then((res) => {
-      setLike(res.data);
-    });
-  }, [postDetail?.post_id]);
 
   const removeComment = (commentId) => {
     axios.delete(`/post/remove-comment/${commentId}`).then(() => {
@@ -73,15 +74,13 @@ const PostDetail = () => {
   const likePost = (id) => {
     if (!alreadyLiked) {
       axios.post(`/post/like-post/${id}`).then(() => {
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
+        fetchLikes();
+        fetchPostDetails();
       });
     } else {
       axios.post(`/post/unlike-post/${id}`).then(() => {
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
+        fetchLikes();
+        fetchPostDetails();
       });
     }
   };
@@ -117,7 +116,7 @@ const PostDetail = () => {
           <div className="flex justify-between">
             <Link
               to={`/user-profile/${postDetail.user_id}`}
-              className="flex gap-2 mt-5 item-center bg-white rounded-lg"
+              className="flex gap-2 mt-5 items-center bg-white rounded-lg"
             >
               <div className="relative">
                 <img

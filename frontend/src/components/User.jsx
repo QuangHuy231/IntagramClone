@@ -51,7 +51,7 @@ const User = ({ value }) => {
     >
       <Link
         to={`/user-profile/${user_id}`}
-        className="flex gap-2 mt-2 item-center"
+        className="flex gap-2 mt-2 items-center"
       >
         <div className="relative">
           <img

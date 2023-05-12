@@ -96,7 +96,7 @@ const CreatePost = () => {
 
             {!imageAsset ? (
               <label>
-                <div className="flex flex-col item-center justify-center h-full">
+                <div className="flex flex-col items-center justify-center h-full">
                   <div className="flex flex-col justify-center items-center">
                     <p className="font-bold text-2xl ">
                       <AiOutlineCloudUpload />
